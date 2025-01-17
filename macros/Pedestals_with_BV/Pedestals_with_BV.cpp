@@ -55,7 +55,8 @@ int main() {
   TTree *t1;
   f1->GetObject("Events", t1);
   test_beam obj = test_beam(t1);
-  double Pedestals[8][222], Total_Noise[6][8][222], Pedestals_Error[8][222];
+  double Pedestals[6][8][222], Total_Noise[6][8][222],
+      Pedestals_Error[6][8][222];
   double ch_number[222];
   int n_events;
   TH1F *h_ADC[8][222] = {};
@@ -110,15 +111,15 @@ int main() {
     for (int m = 0; m < 8; m++) {
       for (int c = 0; c < 222; c++) {
         if (m == 7 && c >= 111) {
-          Pedestals[m][c] = 0;
+          Pedestals[file_number][m][c] = 0;
           Total_Noise[file_number][m][c] = 0;
-          Pedestals_Error[m][c] = 0;
+          Pedestals_Error[file_number][m][c] = 0;
           continue;
         }
         ch_number[c] = c * 1.0 + 1.0;
-        Pedestals[m][c] = h_ADC[m][c]->GetMean();
+        Pedestals[file_number][m][c] = h_ADC[m][c]->GetMean();
         Total_Noise[file_number][m][c] = h_ADC[m][c]->GetStdDev();
-        Pedestals_Error[m][c] = h_ADC[m][c]->GetMeanError();
+        Pedestals_Error[file_number][m][c] = h_ADC[m][c]->GetMeanError();
       }
     }
 
@@ -126,8 +127,9 @@ int main() {
     // Record Pedestals in Tgraphs
     for (int m = 0; m < 8; m++) {
       std::cout << "Creating graph for module " << m << "..." << std::endl;
-      gE[file_number][m] = new TGraphErrors(222, ch_number, Pedestals[m],
-                                            nullptr, Pedestals_Error[m]);
+      gE[file_number][m] =
+          new TGraphErrors(222, ch_number, Pedestals[file_number][m], nullptr,
+                           Pedestals_Error[file_number][m]);
       sprintf(title, "Bias:%i; module%i", bias[file_number], m);
       gE[file_number][m]->SetName(title);
       gE[file_number][m]->SetTitle(title);
@@ -182,29 +184,43 @@ int main() {
       new TTree("PedestalTree", "Tree storing pedestal and noise data");
 
   // Variables to be stored in the TTree
-  int module, channel;
-  double pedestal, pedestalError, noise;
+  int fileIndex; // File index to track which file corresponds to the event
+  double pedestalsEvent[1665];
+  double pedestalErrorsEvent[1665];
+  double noisesEvent[1665];
 
   // Create branches for the TTree
-  pedestalTree->Branch("module", &module, "module/I");
-  pedestalTree->Branch("channel", &channel, "channel/I");
-  pedestalTree->Branch("pedestal", &pedestal, "pedestal/D");
-  pedestalTree->Branch("pedestalError", &pedestalError, "pedestalError/D");
-  pedestalTree->Branch("noise", &noise, "noise/D");
+  pedestalTree->Branch("fileIndex", &fileIndex, "fileIndex/I");
+  pedestalTree->Branch("pedestals", pedestalsEvent, "pedestals[1665]/D");
+  pedestalTree->Branch("pedestalErrors", pedestalErrorsEvent,
+                       "pedestalErrors[1665]/D");
+  pedestalTree->Branch("noises", noisesEvent, "noises[1665]/D");
 
   // Fill the TTree
-  for (int m = 0; m < 8; m++) {
-    for (int c = 0; c < 222; c++) {
-      if (m == 7 && c >= 111)
-        continue; // Skip invalid channels for module 7
-      module = m;
-      channel = c;
-      pedestal = Pedestals[m][c];
-      pedestalError = Pedestals_Error[m][c];
-      noise = Total_Noise[file_number - 1][m]
-                         [c]; // Store the noise for the last processed file
-      pedestalTree->Fill();   // Add this entry to the TTree
+  for (int f = 0; f < file_number; f++) { // Loop over each file
+    fileIndex = f;                        // Set the file index
+
+    // Reset arrays for the current file
+    for (int i = 0; i < 1665; i++) {
+      pedestalsEvent[i] = 0;
+      pedestalErrorsEvent[i] = 0;
+      noisesEvent[i] = 0;
     }
+
+    // Populate arrays with data for this file
+    int idx = 0;
+    for (int m = 0; m < 8; m++) {
+      for (int c = 0; c < 222; c++) {
+        if (m == 7 && c >= 111)
+          continue; // Skip invalid channels
+        pedestalsEvent[idx] = Pedestals[f][m][c];
+        pedestalErrorsEvent[idx] = Pedestals_Error[f][m][c];
+        noisesEvent[idx] = Total_Noise[f][m][c];
+        idx++;
+      }
+    }
+
+    pedestalTree->Fill(); // Add this file's data as an event in the TTree
   }
 
   for (int f = 0; f < 6; f++) {
