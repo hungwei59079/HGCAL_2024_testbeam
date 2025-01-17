@@ -1,0 +1,14 @@
+# Ignore swap files, backup files, and undo files
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.undo
+
+# Ignore packer.nvim plugin directories (if applicable)
+site/pack/*
+
+# Ignore logs or other temporary files
+log/
+*.log
