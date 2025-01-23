@@ -119,6 +119,7 @@ int main() {
         ch_number[c] = c * 1.0 + 1.0;
         Pedestals[file_number][m][c] = h_ADC[m][c]->GetMean();
         Total_Noise[file_number][m][c] = h_ADC[m][c]->GetStdDev();
+        std::cout << Total_Noise[file_number][m][c] << std::endl;
         Pedestals_Error[file_number][m][c] = h_ADC[m][c]->GetMeanError();
       }
     }
