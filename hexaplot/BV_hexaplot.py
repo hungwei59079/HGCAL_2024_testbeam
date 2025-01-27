@@ -1,7 +1,6 @@
 import os
 
 import ROOT
-
 import wafer
 
 # Open the ROOT file
