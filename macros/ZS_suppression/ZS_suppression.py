@@ -1,23 +1,18 @@
-import os
-import sys
-
-import ROOT
-
-sys.path.append("../../hexaplot/")
-import wafer
+import uproot
 
 # Open the ROOT file
-f1 = ROOT.TFile.Open(
-    "/data1/SepTB2024/Relay1726920851/NANO_1726920854_1.root"
-)  # Fix this with complete path
-t1 = f1.Get("Events")
-
-
-ROOT.gStyle.SetOptStat(0)
-ROOT.gStyle.SetPaintTextFormat(".2f")
-
-for i in range(0, 10):
-    t1.GetEntry(i)
-    ADC = getattr(t1, "HGCDigi_adc")
-    channel = getattr(t1, "HGCDigi_channel")
-    print(f"Event {i}; Channels: {channel}; ADC: {ADC}")
+file_path = "/data1/SepTB2024/Relay1726920851/NANO_1726920854_1.root"
+with uproot.open(file_path) as file:
+    # Access the "Events" tree
+    t1 = file["Events"]
+    
+    # Access branches directly
+    adc_branch = t1["HGCDigi_adc"].array()
+    channel_branch = t1["HGCDigi_channel"].array()
+    
+    # Loop over events (limited to the first 10)
+    for i in range(10):
+        adc = adc_branch[i]  # ADC values for event i
+        channel = channel_branch[i]  # Channel values for event i
+        print(f"Event {i}; Channels: {channel}; ADC: {adc}")
+        print(f"Type of channel: {type(channel)}; Type of adc: {type(adc)}")
