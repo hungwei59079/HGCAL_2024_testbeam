@@ -94,9 +94,7 @@ int main() {
     for (int i = 0; i < n_events; i++) {
       if (i % 1000 == 0)
         std::cout << "Processing event " << i << " / " << n_events << std::endl;
-      // std::cout<<"test_1"<<std::endl;
       t1->GetEntry(i);
-      // std::cout<<"test_2"<<std::endl;
       for (int m = 0; m < 8; m++) {
         for (int c = 0; c < 222; c++) {
           if (m == 7 && c >= 111) {
@@ -119,9 +117,11 @@ int main() {
         ch_number[c] = c * 1.0 + 1.0;
         Pedestals[file_number][m][c] = h_ADC[m][c]->GetMean();
         Total_Noise[file_number][m][c] = h_ADC[m][c]->GetStdDev();
-        std::cout << "File number " <<file_number<<" Module "<<m<<" Channel "<<c<<" :"<<Total_Noise[file_number][m][c] << std::endl;
+        std::cout << "File number " << file_number << " Module " << m
+                  << " Channel " << c << " :" << Total_Noise[file_number][m][c]
+                  << std::endl;
         Pedestals_Error[file_number][m][c] = h_ADC[m][c]->GetMeanError();
-		h_ADC[m][c]->Reset();
+        h_ADC[m][c]->Reset();
       }
     }
 
