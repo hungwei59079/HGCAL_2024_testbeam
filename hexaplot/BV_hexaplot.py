@@ -1,6 +1,7 @@
 import os
 
 import ROOT
+
 import wafer
 
 # Open the ROOT file
@@ -49,6 +50,8 @@ for file_number in range(6):
         )
         hist = wafer.fill_wafer_hist(Pedestals[m])
         hist.SetTitle(f"Pedestals Map for Module {m}; BV = {Bias_Voltage[file_number]}")
+        hist.SetMinimum(100)
+        hist.SetMaximum(200)
         canvas = ROOT.TCanvas(f"c_{file_number}_{m}", "Hexaplot", 800, 600)
         hist.Draw("COLZ TEXT")
         output_dir = "./Pedestals/"
@@ -63,6 +66,8 @@ for file_number in range(6):
         hist.SetTitle(
             f"Total_Noise Map for Module {m}; BV = {Bias_Voltage[file_number]}"
         )
+        hist.SetMinimum(0)
+        hist.SetMaximum(5)
         canvas = ROOT.TCanvas(f"c_{file_number}_{m}_noise", "Hexaplot", 800, 600)
         hist.Draw("COLZ TEXT")
         output_dir = "./Total_Noise/"
