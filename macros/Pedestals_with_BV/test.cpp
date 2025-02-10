@@ -70,59 +70,46 @@ int main() {
       std::cerr << "Error: Failed to open file " << filepath << std::endl;
       continue;
     }
+	// First histogram (HGCDigi_channel == 74)
+	std::cout << "Drawing histogram for HGCDigi_channel == 74, fedReadoutSeq == 0" << std::endl;
+	TH1F *h_temp = (TH1F *)gROOT->FindObject("h_temp");
+	if (h_temp) delete h_temp;  // Clear any existing histogram
 
-    f1->GetObject("Events", t1);
+	t1->Draw("HGCDigi_adc>>h_temp", "HGCDigi_channel==74 && HGCDigi_fedReadoutSeq==0", "goff");
+	h_temp = (TH1F *)gROOT->FindObject("h_temp");
+
+	if (h_temp) {
+  	  	h_ADC_1[file_number] = (TH1F *)h_temp->Clone(Form("h_ADC_1_%d", file_number));
+    	h_ADC_1[file_number]->SetDirectory(0);  // Prevent deletion when file closes
+    	std::cout << "Histogram h_ADC_1_" << file_number << " cloned with "  << h_ADC_1[file_number]->GetEntries() << " entries." << std::endl;
+} else {
+   		std::cerr << "Error: Failed to retrieve h_ADC_1_" << file_number << std::endl;
+}
+
+// Second histogram (HGCDigi_channel == 9)
+	std::cout << "Drawing histogram for HGCDigi_channel == 9, fedReadoutSeq == 5" << std::endl;
+	h_temp = (TH1F *)gROOT->FindObject("h_temp");
+	if (h_temp) delete h_temp;
+
+	t1->Draw("HGCDigi_adc>>h_temp", "HGCDigi_channel==9 && HGCDigi_fedReadoutSeq==5", "goff");
+	h_temp = (TH1F *)gROOT->FindObject("h_temp");
+
+	if (h_temp) {
+   		h_ADC_2[file_number] = (TH1F *)h_temp->Clone(Form("h_ADC_2_%d", file_number));
+    	h_ADC_2[file_number]->SetDirectory(0);  // Prevent deletion when file closes
+    	std::cout << "Histogram h_ADC_2_" << file_number << " cloned with " << h_ADC_2[file_number]->GetEntries() << " entries." << std::endl;
+} else {
+    	std::cerr << "Error: Failed to retrieve h_ADC_2_" << file_number << std::endl;
+}
+
+    	f1->GetObject("Events", t1);
     if (!t1) {
-      std::cerr << "Error: TTree 'Events' not found in " << filepath
-                << std::endl;
-      f1->Close();
-      delete f1;
-      continue;
+      	std::cerr << "Error: TTree 'Events' not found in " << filepath << std::endl;
+     	f1->Close();
+      	delete f1;
+		continue;
     }
 
-    // First histogram (HGCDigi_channel == 74)
-    std::cout
-        << "Drawing histogram for HGCDigi_channel == 74, fedReadoutSeq == 0"
-        << std::endl;
-    TH1F *h_temp = (TH1F *)gROOT->FindObject("h_temp");
-    if (h_temp)
-      delete h_temp; // Clear any existing histogram with this name
-
-    t1->Draw("HGCDigi_adc>>h_temp",
-             "HGCDigi_channel==74 && HGCDigi_fedReadoutSeq==0", "goff");
-    h_ADC_1[file_number] = (TH1F *)gROOT->FindObject("h_temp");
-
-    if (h_ADC_1[file_number]) {
-      h_ADC_1[file_number]->SetName(Form("h_ADC_1_%d", file_number));
-      std::cout << "Histogram h_ADC_1_" << file_number << " created with "
-                << h_ADC_1[file_number]->GetEntries() << " entries."
-                << std::endl;
-    } else {
-      std::cerr << "Error: Failed to retrieve h_ADC_1_" << file_number
-                << std::endl;
-    }
-
-    // Second histogram (HGCDigi_channel == 9)
-    std::cout
-        << "Drawing histogram for HGCDigi_channel == 9, fedReadoutSeq == 5"
-        << std::endl;
-    h_temp = (TH1F *)gROOT->FindObject("h_temp");
-    if (h_temp)
-      delete h_temp; // Clear previous h_temp before reusing the name
-
-    t1->Draw("HGCDigi_adc>>h_temp",
-             "HGCDigi_channel==9 && HGCDigi_fedReadoutSeq==5", "goff");
-    h_ADC_2[file_number] = (TH1F *)gROOT->FindObject("h_temp");
-
-    if (h_ADC_2[file_number]) {
-      h_ADC_2[file_number]->SetName(Form("h_ADC_2_%d", file_number));
-      std::cout << "Histogram h_ADC_2_" << file_number << " created with "
-                << h_ADC_2[file_number]->GetEntries() << " entries."
-                << std::endl;
-    } else {
-      std::cerr << "Error: Failed to retrieve h_ADC_2_" << file_number
-                << std::endl;
-    }
 
     // Close file
     f1->Close();
