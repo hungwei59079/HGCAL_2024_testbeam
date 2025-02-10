@@ -37,16 +37,18 @@ for file_number, filepath in enumerate(file_paths):
             continue
 
         tree = f["Events"]
-        print(tree.keys())
         # Load relevant branches
         adc = tree["HGCDigi_adc"].array(library="np")
         channel = tree["HGCDigi_channel"].array(library="np")
         fed_seq = tree["HGCDigi_fedReadoutSeq"].array(library="np")
 
+        adc_flat = np.concatenate(adc)
+        channel_flat = np.concatenate(channel)
+        fed_seq_flat = np.concatenate(fed_seq)
+
         # First histogram (HGCDigi_channel == 74, fedReadoutSeq == 0)
-        mask_1 = (channel == 74) & (fed_seq == 0)
-        adc_values_1 = adc[mask_1]
-        print(f"adc_values_1 = {adc_values_1}")
+        mask_1 = (channel_flat == 74) & (fed_seq_flat == 0)
+        adc_values_1 = adc_flat[mask_1]
         hist_1, _ = np.histogram(adc_values_1, bins=bins)
         print(f"Histogram h_ADC_1_{file_number} created with {np.sum(hist_1)} entries.")
 
@@ -68,8 +70,8 @@ for file_number, filepath in enumerate(file_paths):
         plt.close()
 
         # Second histogram (HGCDigi_channel == 9, fedReadoutSeq == 5)
-        mask_2 = (channel == 9) & (fed_seq == 5)
-        adc_values_2 = adc[mask_2]
+        mask_2 = (channel_flat == 9) & (fed_seq_flat == 5)
+        adc_values_2 = adc_flat[mask_2]
 
         hist_2, _ = np.histogram(adc_values_2, bins=bins)
         print(f"Histogram h_ADC_2_{file_number} created with {np.sum(hist_2)} entries.")
