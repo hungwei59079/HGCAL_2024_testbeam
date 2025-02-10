@@ -8,10 +8,14 @@ import matplotlib.pyplot as plt
 root_directory = "/data1/SepTB2024"
 target_prefixes = ["NANO_172716", "NANO_172717", "NANO_172718", "NANO_172720"]
 
-# Find all ROOT files with the target prefixes
+# Recursively find all ROOT files with the target prefixes
 file_paths = []
-for prefix in target_prefixes:
-    file_paths.extend(glob.glob(os.path.join(root_directory, f"{prefix}*.root")))
+for root, _, files in os.walk(root_directory):
+    for filename in files:
+        if filename.endswith(".root") and any(filename.startswith(prefix) for prefix in target_prefixes):
+            file_paths.append(os.path.join(root, filename))
+
+print("Found ROOT files:", file_paths)  # Debugging output
 
 # Output directory for histograms
 output_dir = os.path.expanduser("~/HGCAL/2024/root_files/histograms")
