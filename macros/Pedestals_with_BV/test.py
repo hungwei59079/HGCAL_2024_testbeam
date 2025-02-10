@@ -1,8 +1,9 @@
-import uproot
-import numpy as np
-import os
 import glob
+import os
+
 import matplotlib.pyplot as plt
+import numpy as np
+import uproot
 
 # Define root directory
 root_directory = "/data1/SepTB2024"
@@ -12,7 +13,9 @@ target_prefixes = ["NANO_172716", "NANO_172717", "NANO_172718", "NANO_172720"]
 file_paths = []
 for root, _, files in os.walk(root_directory):
     for filename in files:
-        if filename.endswith(".root") and any(filename.startswith(prefix) for prefix in target_prefixes):
+        if filename.endswith(".root") and any(
+            filename.startswith(prefix) for prefix in target_prefixes
+        ):
             file_paths.append(os.path.join(root, filename))
 
 print("Found ROOT files:", file_paths)  # Debugging output
@@ -27,14 +30,14 @@ bins = np.linspace(0, 300, 301)  # 300 bins from 0 to 300
 # Process each file
 for file_number, filepath in enumerate(file_paths):
     print(f"Processing file: {filepath}")
-    
+
     with uproot.open(filepath) as f:
         if "Events" not in f:
             print(f"Warning: 'Events' tree not found in {filepath}")
             continue
-        
-        tree = f["Events"]
 
+        tree = f["Events"]
+        print(tree.keys())
         # Load relevant branches
         adc = tree["HGCDigi_adc"].array(library="np")
         channel = tree["HGCDigi_channel"].array(library="np")
@@ -43,13 +46,20 @@ for file_number, filepath in enumerate(file_paths):
         # First histogram (HGCDigi_channel == 74, fedReadoutSeq == 0)
         mask_1 = (channel == 74) & (fed_seq == 0)
         adc_values_1 = adc[mask_1]
-
+        print(f"adc_values_1 = {adc_values_1}")
         hist_1, _ = np.histogram(adc_values_1, bins=bins)
         print(f"Histogram h_ADC_1_{file_number} created with {np.sum(hist_1)} entries.")
 
         # Save histogram as PNG
         plt.figure(figsize=(8, 6))
-        plt.hist(bins[:-1], bins, weights=hist_1, alpha=0.7, color="blue", label="Channel 74, FedReadoutSeq 0")
+        plt.hist(
+            bins[:-1],
+            bins,
+            weights=hist_1,
+            alpha=0.7,
+            color="blue",
+            label="Channel 74, FedReadoutSeq 0",
+        )
         plt.xlabel("ADC")
         plt.ylabel("Events")
         plt.legend()
@@ -66,7 +76,14 @@ for file_number, filepath in enumerate(file_paths):
 
         # Save second histogram as PNG
         plt.figure(figsize=(8, 6))
-        plt.hist(bins[:-1], bins, weights=hist_2, alpha=0.7, color="red", label="Channel 9, FedReadoutSeq 5")
+        plt.hist(
+            bins[:-1],
+            bins,
+            weights=hist_2,
+            alpha=0.7,
+            color="red",
+            label="Channel 9, FedReadoutSeq 5",
+        )
         plt.xlabel("ADC")
         plt.ylabel("Events")
         plt.legend()
@@ -75,4 +92,3 @@ for file_number, filepath in enumerate(file_paths):
         plt.close()
 
 print(f"Histograms saved as PNGs in {output_dir}")
-
