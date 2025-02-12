@@ -1,4 +1,3 @@
-import glob
 import os
 
 import matplotlib.pyplot as plt
@@ -57,12 +56,13 @@ for file_number, filepath in enumerate(file_paths):
 
         # Save histogram as PNG with log scale
         plt.figure(figsize=(8, 6))
-        plt.hist(
-            adc_values_1,
-            bins="auto",
-            alpha=0.7,
-            color="blue",
-            label="Channel 74, FedReadoutSeq 0",
+        plt.bar(
+            bins_1[:-1],
+            hist_1,
+            width=np.diff(bins_1),
+            facecolor="white",
+            edgecolor="blue",
+            linewidth=1,
         )
         plt.yscale("log")  # Set log scale for y-axis
         plt.xlabel("ADC")
@@ -82,12 +82,13 @@ for file_number, filepath in enumerate(file_paths):
 
         # Save second histogram as PNG with log scale
         plt.figure(figsize=(8, 6))
-        plt.hist(
-            adc_values_2,
-            bins="auto",
-            alpha=0.7,
-            color="red",
-            label="Channel 9, FedReadoutSeq 5",
+        plt.bar(
+            bins_2[:-1],
+            hist_2,
+            width=np.diff(bins_2),
+            facecolor="white",
+            edgecolor="blue",
+            linewidth=1,
         )
         plt.yscale("log")  # Set log scale for y-axis
         plt.xlabel("ADC")
