@@ -24,8 +24,22 @@ output_dir = os.path.expanduser("~/HGCAL/2024/root_files/histograms")
 os.makedirs(output_dir, exist_ok=True)
 
 # Custom histogram bin settings (modifiable later)
-bin_1 = [np.linspace(0, 300, 301) for _ in range(6)]
-bin_2 = [np.linspace(0, 300, 301) for _ in range(6)]
+bin_1 = []
+bin_2 = []
+
+bin_1.append(np.linspace(100, 200, 101))
+bin_1.append(np.linspace(100, 200, 101))
+bin_1.append(np.linspace(100, 200, 101))
+bin_1.append(np.linspace(100, 200, 101))
+bin_1.append(np.linspace(100, 200, 101))
+bin_1.append(np.linspace(100, 200, 101))
+
+bin_2.append(np.linspace(100, 200, 101))
+bin_2.append(np.linspace(100, 200, 101))
+bin_2.append(np.linspace(0, 200, 201))
+bin_2.append(np.linspace(0, 1000, 1001))
+bin_2.append(np.linspace(0, 1000, 1001))
+bin_2.append(np.linspace(0, 1000, 1001))
 
 bias = [-130, -300, -400, -500, -600, -700]
 
