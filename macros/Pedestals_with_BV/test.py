@@ -27,6 +27,7 @@ os.makedirs(output_dir, exist_ok=True)
 # Histogram settings
 bins = np.linspace(0, 300, 301)  # 300 bins from 0 to 300
 
+bias = [-130, -300, -400, -500, -600, -700]
 # Process each file
 for file_number, filepath in enumerate(file_paths):
     print(f"Processing file: {filepath}")
@@ -49,48 +50,51 @@ for file_number, filepath in enumerate(file_paths):
         # First histogram (HGCDigi_channel == 74, fedReadoutSeq == 0)
         mask_1 = (channel_flat == 74) & (fed_seq_flat == 0)
         adc_values_1 = adc_flat[mask_1]
-        hist_1, _ = np.histogram(adc_values_1, bins=bins)
-        print(f"Histogram h_ADC_1_{file_number} created with {np.sum(hist_1)} entries.")
+        hist_1, bins_1 = np.histogram(adc_values_1, bins=bins)
+        print(
+            f"Histogram mod_0_ch_74{bias[file_number]} created with {np.sum(hist_1)} entries."
+        )
 
-        # Save histogram as PNG
+        # Save histogram as PNG with log scale
         plt.figure(figsize=(8, 6))
         plt.hist(
-            bins[:-1],
-            bins,
-            weights=hist_1,
+            adc_values_1,
+            bins="auto",
             alpha=0.7,
             color="blue",
             label="Channel 74, FedReadoutSeq 0",
         )
+        plt.yscale("log")  # Set log scale for y-axis
         plt.xlabel("ADC")
-        plt.ylabel("Events")
+        plt.ylabel("Log(Events)")
         plt.legend()
         plt.title(f"ADC Histogram - File {file_number}")
-        plt.savefig(os.path.join(output_dir, f"h_ADC_1_{file_number}.png"))
+        plt.savefig(os.path.join(output_dir, f"mod_0_ch_74{bias[file_number]}.png"))
         plt.close()
 
         # Second histogram (HGCDigi_channel == 9, fedReadoutSeq == 5)
         mask_2 = (channel_flat == 9) & (fed_seq_flat == 5)
         adc_values_2 = adc_flat[mask_2]
+        hist_2, bins_2 = np.histogram(adc_values_2, bins=bins)
+        print(
+            f"Histogram mod_5_ch_9{bias[file_number]}.created with {np.sum(hist_2)} entries."
+        )
 
-        hist_2, _ = np.histogram(adc_values_2, bins=bins)
-        print(f"Histogram h_ADC_2_{file_number} created with {np.sum(hist_2)} entries.")
-
-        # Save second histogram as PNG
+        # Save second histogram as PNG with log scale
         plt.figure(figsize=(8, 6))
         plt.hist(
-            bins[:-1],
-            bins,
-            weights=hist_2,
+            adc_values_2,
+            bins="auto",
             alpha=0.7,
             color="red",
             label="Channel 9, FedReadoutSeq 5",
         )
+        plt.yscale("log")  # Set log scale for y-axis
         plt.xlabel("ADC")
-        plt.ylabel("Events")
+        plt.ylabel("Log(Events)")
         plt.legend()
         plt.title(f"ADC Histogram - File {file_number}")
-        plt.savefig(os.path.join(output_dir, f"h_ADC_2_{file_number}.png"))
+        plt.savefig(os.path.join(output_dir, f"mod_5_ch_9{bias[file_number]}."))
         plt.close()
 
 print(f"Histograms saved as PNGs in {output_dir}")
