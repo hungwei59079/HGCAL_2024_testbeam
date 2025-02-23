@@ -54,7 +54,7 @@ int main() {
       "prompt/NANO_1727169613_1.root");
   TTree *t1;
   f1->GetObject("Events", t1);
-  test_beam obj = test_beam(t1);
+  // test_beam obj = test_beam(t1);
   double Pedestals[6][8][222], Total_Noise[6][8][222],
       Pedestals_Error[6][8][222];
   double ch_number[222];
