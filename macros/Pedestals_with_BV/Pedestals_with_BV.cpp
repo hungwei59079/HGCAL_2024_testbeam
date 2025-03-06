@@ -71,7 +71,7 @@ int main() {
     for (int i = 0; i < 222; i++) {
       sprintf(name, "mod_%i_ch_%i", m, i);
       sprintf(title, "mod_%i_ch_%i", m, i);
-      h_ADC[m][i] = new TH1F(name, title, 300, 0, 300);
+      h_ADC[m][i] = new TH1F(name, title, 1024, 0, 1024);
       h_ADC[m][i]->GetXaxis()->SetTitle("ADC");
       h_ADC[m][i]->GetYaxis()->SetTitle("Events");
     }

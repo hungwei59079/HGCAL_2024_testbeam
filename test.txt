@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 I love my work
+=======
+I hate my work
+>>>>>>> jake_1
