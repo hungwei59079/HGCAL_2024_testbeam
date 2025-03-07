@@ -55,31 +55,31 @@ int main() {
     for (int i = 0; i < 222; i++) {
       sprintf(name, "mod_%i_ch_%i", m, i);
       sprintf(title, "mod_%i_ch_%i", m, i);
-      h_TOT[m][i] = new TH1F(name, title, 1000, 0, 1000);
+      h_TOT[m][i] = new TH1F(name, title, 1024, 0, 1024);
       h_TOT[m][i]->GetXaxis()->SetTitle("ADC");
       h_TOT[m][i]->GetYaxis()->SetTitle("Events");
     }
   }
 
-
   // Print all found file paths
-if (file_paths.empty()) {
-    std::cerr << "No matching .root files found in " << root_directory << "!" << std::endl;
-} else {
-    std::cout << "Found " << file_paths.size() << " matching .root files:" << std::endl;
+  if (file_paths.empty()) {
+    std::cerr << "No matching .root files found in " << root_directory << "!"
+              << std::endl;
+  } else {
+    std::cout << "Found " << file_paths.size()
+              << " matching .root files:" << std::endl;
     for (const auto &path : file_paths) {
-        std::cout << path << std::endl;
+      std::cout << path << std::endl;
     }
-}
-
+  }
 
   // loop over files starts here
   for (const auto &filepath : file_paths) {
     std::cout << "Analyzing file: " << filepath << std::endl;
 
-   // if (f1)
-	//	std::cout<<"Previous file is open."<<std::endl;
-     // f1->Close();  Close previous file if already open
+    // if (f1)
+    //	std::cout<<"Previous file is open."<<std::endl;
+    // f1->Close();  Close previous file if already open
     f1 = TFile::Open(filepath.c_str());
     if (!f1 || f1->IsZombie()) {
       std::cerr << "Error opening file: " << filepath << std::endl;
@@ -137,7 +137,8 @@ if (file_paths.empty()) {
 
   // Save results into a ROOT file
   TFile *outputFile = TFile::Open(
-      "/data1/home_ss2024/ss2024_05/HGCAL/2024/root_files/TOT_analysis.root", "RECREATE");
+      "/data1/home_ss2024/ss2024_05/HGCAL/2024/root_files/TOT_analysis.root",
+      "RECREATE");
   if (!outputFile || outputFile->IsZombie()) {
     std::cerr << "Error: Could not create output ROOT file." << std::endl;
     return 1;

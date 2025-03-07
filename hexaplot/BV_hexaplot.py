@@ -15,7 +15,7 @@ Total_Noise = [[0.0 for _ in range(222)] for _ in range(6)]
 Bias_Voltage = [-130, -300, -400, -500, -600, -700]
 
 ROOT.gStyle.SetOptStat(0)
-ROOT.gStyle.SetPaintTextFormat(".2f")
+
 print("Set up complete. Ready to create hexaplots.")
 
 # Loop through entries
@@ -52,6 +52,7 @@ for file_number in range(6):
         hist.SetTitle(f"Pedestals Map for Module {m}; BV = {Bias_Voltage[file_number]}")
         hist.SetMinimum(100)
         hist.SetMaximum(200)
+        ROOT.gStyle.SetPaintTextFormat(".1f")
         canvas = ROOT.TCanvas(f"c_{file_number}_{m}", "Hexaplot", 800, 600)
         hist.Draw("COLZ TEXT")
         output_dir = "./Pedestals/"
@@ -68,6 +69,7 @@ for file_number in range(6):
         )
         hist.SetMinimum(0)
         hist.SetMaximum(5)
+        ROOT.gStyle.SetPaintTextFormat(".2f")
         canvas = ROOT.TCanvas(f"c_{file_number}_{m}_noise", "Hexaplot", 800, 600)
         hist.Draw("COLZ TEXT")
         output_dir = "./Total_Noise/"
