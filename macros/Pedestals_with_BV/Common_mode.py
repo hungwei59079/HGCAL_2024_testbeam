@@ -13,10 +13,9 @@ file_paths = [
 
 bias = [-130, -300, -400, -500, -600, -700]
 
-# Create 36 empty lists to store data
-
+# Process each file
 for file_number, filepath in enumerate(file_paths):
-    print(f"Processing file: {filepath}")
+    print(f"\nProcessing file {file_number + 1}/{len(file_paths)}: {filepath}")
 
     with uproot.open(filepath) as f:
         if "Events" not in f:
@@ -25,11 +24,16 @@ for file_number, filepath in enumerate(file_paths):
 
         tree = f["Events"]
         histogram_data = [[] for _ in range(36)]
-        # Load relevant branches
-        common_mode = tree["HGCDigi_cm"].array(library="np")
+
+        print("Loading common_mode data...")
+        common_mode = tree["HGCDigi_cm"].array(library="np") / 2
+        print(f"Loaded {len(common_mode)} events.")
 
         # Loop through events
         for event_number in range(len(common_mode)):
+            if event_number % 1000 == 0:
+                print(f"Processing event {event_number}/{len(common_mode)}...")
+
             for i in range(36):
                 index = 37 * i  # Get the correct index
                 if index < len(
@@ -37,9 +41,14 @@ for file_number, filepath in enumerate(file_paths):
                 ):  # Ensure index is within bounds
                     histogram_data[i].append(common_mode[event_number][index])
                 else:
-                    print("Warning: Index out of range")
+                    print(
+                        f"Warning: Index {index} out of range in event {event_number}"
+                    )
+
+        print("Finished processing events. Now saving histograms...")
 
         for i in range(36):
+            print(f"Saving histogram {i + 1}/36 for file {file_number}...")
             plt.figure()
             plt.hist(
                 histogram_data[i], bins=1024, range=(0, 1023), alpha=0.7, color="blue"
@@ -50,3 +59,4 @@ for file_number, filepath in enumerate(file_paths):
             plt.savefig(f"histogram_{i+1}_file_{file_number}.png")
             plt.close()
 
+    print(f"Finished processing file {file_number + 1}/{len(file_paths)}.\n")
