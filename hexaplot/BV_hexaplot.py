@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import ROOT
 
 import wafer
@@ -45,6 +46,13 @@ for file_number in range(6):
                 print(f"Index {index} out of range for entry {file_number}. Skipping.")
                 continue
 
+        # add a if statement here to keep only the noise of 22 noisiest channels
+        sorted_total_noise = np.array(Total_Noise[m])
+        top_c_indices = np.argsort(sorted_total_noise)[-22:]
+        mask = np.zeros_like(sorted_total_noise)
+        mask[top_c_indices] = sorted_total_noise[top_c_indices]
+        Total_Noise[m] = mask
+
         print(
             f"Creating TH2 Object for Pedestals of file_number {file_number}, Module {m}"
         )
@@ -72,7 +80,7 @@ for file_number in range(6):
         ROOT.gStyle.SetPaintTextFormat(".2f")
         canvas = ROOT.TCanvas(f"c_{file_number}_{m}_noise", "Hexaplot", 800, 600)
         hist.Draw("COLZ TEXT")
-        output_dir = "./Total_Noise/"
+        output_dir = "./Total_Noise_with_mask/"
         canvas.SaveAs(
             os.path.join(
                 output_dir, f"Total_Noise_BV_{Bias_Voltage[file_number]}_Module_{m}.png"
