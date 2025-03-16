@@ -49,4 +49,4 @@ for file_number, filepath in enumerate(file_paths):
             plt.ylabel("Events")
             plt.savefig(f"histogram_{i+1}_file_{file_number}.png")
             plt.close()
-        
+
