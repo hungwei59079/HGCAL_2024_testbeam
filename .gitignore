@@ -12,3 +12,5 @@ site/pack/*
 # Ignore logs or other temporary files
 log/
 *.log
+
+.DS_Store
