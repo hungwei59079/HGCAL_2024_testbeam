@@ -1,11 +1,7 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import uproot
 
-# Open the ROOT file
-root_directory = "/data1/SepTB2024"
-target_prefixes = ["NANO_172716", "NANO_172717", "NANO_172718", "NANO_172720"]
-
-# Recursively find all ROOT files with the target prefixes
 file_paths = [
     "/data1/SepTB2024/Relay1727206089/d560f64b-e3dd-1ffa-98b4-85deaaaa1310/prompt/NANO_1727206092_1.root",
     "/data1/SepTB2024/Relay1727207396/6b641b3b-ab20-1d48-8546-a1a97c73708c/prompt/NANO_1727207399_1.root",
@@ -17,25 +13,39 @@ file_paths = [
 
 bias = [-130, -300, -400, -500, -600, -700]
 
+# Create 36 empty lists to store data
+
 for file_number, filepath in enumerate(file_paths):
     print(f"Processing file: {filepath}")
 
     with uproot.open(filepath) as f:
-
         if "Events" not in f:
             print(f"Warning: 'Events' tree not found in {filepath}")
             continue
 
         tree = f["Events"]
+        histogram_data = [[] for _ in range(36)]
         # Load relevant branches
-        adc = tree["HGCDigi_adc"].array(library="np")
-        channel = tree["HGCDigi_channel"].array(library="np")
-        fed_seq = tree["HGCDigi_fedReadoutSeq"].array(library="np")
         common_mode = tree["HGCDigi_cm"].array(library="np")
 
-        adc_flat = np.concatenate(adc)
-        channel_flat = np.concatenate(channel)
-        fed_seq_flat = np.concatenate(fed_seq)
-        common_mode_flat = np.concatenate(common_mode)
-        print(adc)
-        print(adc_flat)
+        # Loop through events
+        for event_number in range(len(common_mode)):
+            for i in range(36):
+                index = 37 * i  # Get the correct index
+                if index < len(
+                    common_mode[event_number]
+                ):  # Ensure index is within bounds
+                    histogram_data[i].append(common_mode[event_number][index])
+                else:
+                    print("Warning: Index out of range")
+
+        for i in range(36):
+            plt.figure()
+            plt.hist(
+                histogram_data[i], bins=1024, range=(0, 1023), alpha=0.7, color="blue"
+            )
+            plt.title(f"Histogram {i+1}_file_{file_number}")
+            plt.xlabel("Common Mode")
+            plt.ylabel("Events")
+            plt.savefig(f"histogram_{i+1}_file_{file_number}.png")
+            plt.close()
