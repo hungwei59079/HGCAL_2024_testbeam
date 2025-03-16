@@ -12,7 +12,8 @@ file_paths = [
 ]
 
 bias = [-130, -300, -400, -500, -600, -700]
-
+CM_Mean = np.empty((6, 6, 6))
+CM_STDEV = np.empty((6, 6, 6))
 # Process each file
 for file_number, filepath in enumerate(file_paths):
     print(f"\nProcessing file {file_number + 1}/{len(file_paths)}: {filepath}")
@@ -24,6 +25,7 @@ for file_number, filepath in enumerate(file_paths):
 
         tree = f["Events"]
         histogram_data = [[] for _ in range(36)]
+        np_histogram_data = [[] for _ in range(36)]
 
         print("Loading common_mode data...")
         common_mode = tree["HGCDigi_cm"].array(library="np") / 2
@@ -47,16 +49,31 @@ for file_number, filepath in enumerate(file_paths):
 
         print("Finished processing events. Now saving histograms...")
 
-        for i in range(36):
-            print(f"Saving histogram {i + 1}/36 for file {file_number}...")
-            plt.figure()
-            plt.hist(
-                histogram_data[i], bins=1024, range=(0, 1023), alpha=0.7, color="blue"
-            )
-            plt.title(f"Histogram {i+1}_file_{file_number}")
-            plt.xlabel("Common Mode")
-            plt.ylabel("Events")
-            plt.savefig(f"histogram_{i+1}_file_{file_number}.png")
-            plt.close()
+        for m in range(6):
+            for half_roc in range(6):
+                i = m * 6 + half_roc
+                np_histogram_data[i] = np.array(histogram_data[i])
+                CM_Mean[file_number][m][half_roc] = np.mean(np_histogram_data[i])
+                CM_STDEV[file_number][m][half_roc] = np.std(np_histogram_data[i])
+
+                print(f"Saving histogram {i + 1}/36 for file {file_number}...")
+                plt.figure()
+                plt.hist(
+                    histogram_data[i],
+                    bins=1024,
+                    range=(0, 1023),
+                    alpha=0.7,
+                    color="blue",
+                )
+                plt.title(f"Bias: {bias[file_number]}; Module {m}; Half_roc {half_roc}")
+                plt.xlabel("ADC")
+                plt.ylabel("Events")
+                plt.savefig(
+                    f"CM_Bias_{bias[file_number]}V_mod_{m}_halfroc_{half_roc}.png"
+                )
+                plt.close()
 
     print(f"Finished processing file {file_number + 1}/{len(file_paths)}.\n")
+
+print(f"CM_Mean = {CM_Mean}")
+print(f"CM_STDEV = {CM_STDEV}")
