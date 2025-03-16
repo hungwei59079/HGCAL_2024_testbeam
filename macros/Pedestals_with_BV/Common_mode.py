@@ -37,5 +37,4 @@ for file_number, filepath in enumerate(file_paths):
         channel_flat = np.concatenate(channel)
         fed_seq_flat = np.concatenate(fed_seq)
         common_mode_flat = np.concatenate(common_mode)
-        print(adc)
-        print(adc_flat)
+        print(len(common_mode))
