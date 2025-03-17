@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import uproot
@@ -56,24 +58,26 @@ for file_number, filepath in enumerate(file_paths):
                 CM_Mean[file_number][m][half_roc] = np.mean(np_histogram_data[i])
                 CM_STDEV[file_number][m][half_roc] = np.std(np_histogram_data[i])
 
-                print(f"Saving histogram {i + 1}/36 for file {file_number}...")
-                plt.figure()
-                plt.hist(
-                    histogram_data[i],
-                    bins=1024,
-                    range=(0, 1023),
-                    alpha=0.7,
-                    color="blue",
-                )
-                plt.title(f"Bias: {bias[file_number]}; Module {m}; Half_roc {half_roc}")
-                plt.xlabel("ADC")
-                plt.ylabel("Events")
-                plt.savefig(
-                    f"CM_Bias_{bias[file_number]}V_mod_{m}_halfroc_{half_roc}.png"
-                )
-                plt.close()
+                # print(f"Saving histogram {i + 1}/36 for file {file_number}...")
+                # plt.figure()
+                # plt.hist(
+                #     histogram_data[i],
+                #     bins=1024,
+                #     range=(0, 1023),
+                #     alpha=0.7,
+                #     color="blue",
+                # )
+                # plt.title(f"Bias: {bias[file_number]}; Module {m}; Half_roc {half_roc}")
+                # plt.xlabel("ADC")
+                # plt.ylabel("Events")
+                # plt.savefig(
+                #     f"CM_Bias_{bias[file_number]}V_mod_{m}_halfroc_{half_roc}.png"
+                # )
+                # plt.close()
 
     print(f"Finished processing file {file_number + 1}/{len(file_paths)}.\n")
 
-print(f"CM_Mean = {CM_Mean}")
-print(f"CM_STDEV = {CM_STDEV}")
+
+os.chdir("../../hexaplot/")
+np.savetxt("CM_Mean.txt", CM_Mean.flatten(), fmt="%.6f")
+np.savetxt("CM_STDEV.txt", CM_STDEV.flatten(), fmt="%.6f")
