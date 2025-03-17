@@ -77,7 +77,6 @@ for file_number, filepath in enumerate(file_paths):
 
     print(f"Finished processing file {file_number + 1}/{len(file_paths)}.\n")
 
-
 os.chdir("../../hexaplot/")
 np.savetxt("CM_Mean.txt", CM_Mean.flatten(), fmt="%.6f")
 np.savetxt("CM_STDEV.txt", CM_STDEV.flatten(), fmt="%.6f")
