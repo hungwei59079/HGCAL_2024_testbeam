@@ -13,6 +13,8 @@ import json
 import os
 import re
 
+import ROOT
+
 
 def getlimits(xvals, xmin=1e10, xmax=-1e10, margin=0):
     """Help function to set x & y axis limits from list of lists."""
@@ -86,3 +88,13 @@ def fill_wafer_hist(ch_values, moduletype="ML_L"):
 
     file.Close()
     return hex_plot
+
+
+def draw_and_save(hist, title, maximum, minimum, PaintFormat, output_dir):
+    hist.SetTitle(title)
+    hist.SetMinimum(minimum)
+    hist.SetMaximum(maximum)
+    ROOT.gStyle.SetPaintTextFormat(PaintFormat)
+    canvas = ROOT.TCanvas(f"c_{title}", "Hexaplot", 800, 600)
+    hist.Draw("COLZ TEXT")
+    canvas.SaveAs(os.path.join(output_dir, f"{title}.png"))
