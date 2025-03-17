@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import ROOT
 
@@ -21,12 +23,16 @@ for file_number in range(6):
                 values_to_draw[half_roc * 37 + channel] = CM_STDEV[file_number][module][
                     half_roc
                 ]
-        print(values_to_draw)
         hist = wafer.fill_wafer_hist(values_to_draw)
         title = f"CM_noise_map_Bias_{Bias_Voltage[file_number]}_Module_{module}"
-        P_format = ".2f"
-        outputdir = "./CM_Noise"
-        wafer.draw_and_save(hist, title, 0, 5, P_format, outputdir)
+        wafer.draw_and_save(
+            hist,
+            title,
+            PaintFormat=".2f",
+            output_dir="./CM_Noise/",
+            minimum=0,
+            maximum=5,
+        )
 
         for half_roc in range(6):
             for channel in range(37):
@@ -35,6 +41,11 @@ for file_number in range(6):
                 ]
         hist = wafer.fill_wafer_hist(values_to_draw)
         title = f"CM_value_map_Bias_{Bias_Voltage[file_number]}_Module_{module}"
-        P_format = ".1f"
-        outputdir = "./CM_values"
-        wafer.draw_and_save(hist, title, 100, 200, P_format, outputdir)
+        wafer.draw_and_save(
+            hist,
+            title,
+            PaintFormat=".1f",
+            output_dir="./CM_values/",
+            minimum=100,
+            maximum=200,
+        )
