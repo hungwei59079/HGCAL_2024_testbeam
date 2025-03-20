@@ -31,7 +31,7 @@ for file_number in range(6):
             PaintFormat=".2f",
             output_dir="./CM_Noise/",
             minimum=0,
-            maximum=5,
+            maximum=3,
         )
 
         for half_roc in range(6):
