@@ -2,7 +2,6 @@ import os
 
 import numpy as np
 import ROOT
-
 import wafer
 
 # Open the ROOT file

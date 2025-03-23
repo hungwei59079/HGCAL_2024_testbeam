@@ -51,7 +51,6 @@ values_to_draw = np.empty(222)
 #             output_dir="./CM_values/",
 #             minimum=100,
 #             maximum=200,
-#         )
 
 # Scatter plot version
 os.chdir("./CM_Noise_graphs/")
