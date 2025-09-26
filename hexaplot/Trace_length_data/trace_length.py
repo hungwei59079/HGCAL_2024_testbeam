@@ -42,28 +42,29 @@ data_dict = df.to_dict(orient="list")
 
 # trace length map
 trace_values = data_dict["trace"][:222]
+si_cell_num = data_dict["SiCell"][:222]
 # print(trace_values)
-# hist = wafer.fill_wafer_hist(trace_values)
-# wafer.draw_and_save(hist, "trace_length", minimum=0, maximum=80)
+hist = wafer.fill_wafer_hist(si_cell_num)
+wafer.draw_and_save(hist, "Si_cell", minimum=0, maximum=220, PaintFormat=".0f")
 #
-f1 = ROOT.TFile.Open("../../root_files/Pedestals_with_BV.root")
-t1 = f1.Get("PedestalTree")
+# f1 = ROOT.TFile.Open("../../root_files/Pedestals_with_BV.root")
+# t1 = f1.Get("PedestalTree")
 
-Total_Noise = [[0.0 for _ in range(222)] for _ in range(6)]
-Bias_Voltage = [-130, -300, -400, -500, -600, -700]
+# Total_Noise = [[0.0 for _ in range(222)] for _ in range(6)]
+# Bias_Voltage = [-130, -300, -400, -500, -600, -700]
 
-for file_number in range(6):
-    t1.GetEntry(file_number)
-    noises = getattr(t1, "noises")
-    for m in range(6):
-        for c in range(222):
-            index = m * 222 + c
-            Total_Noise[m][c] = noises[index]
-        plt.figure(figsize=(8, 6))
-        plt.scatter(trace_values, Total_Noise[m])
-        plt.xlabel("trace length (cm)")
-        plt.ylabel("Noise (ADC)")
-        title = f"Bias_{Bias_Voltage[file_number]}_module_{m}_trace_correlation"
-        plt.title(title)
-        plt.savefig(title)
-        plt.close()
+# for file_number in range(6):
+#    t1.GetEntry(file_number)
+#    noises = getattr(t1, "noises")
+#    for m in range(6):
+#        for c in range(222):
+#            index = m * 222 + c
+#            Total_Noise[m][c] = noises[index]
+#        plt.figure(figsize=(8, 6))
+#        plt.scatter(trace_values, Total_Noise[m])
+#        plt.xlabel("trace length (cm)")
+#        plt.ylabel("Noise (ADC)")
+#        title = f"Bias_{Bias_Voltage[file_number]}_module_{m}_trace_correlation"
+#        plt.title(title)
+#        plt.savefig(title)
+#        plt.close()
